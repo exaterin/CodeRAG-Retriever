@@ -21,9 +21,18 @@ def clone_repo(repo_url: str, clone_path: str = "data/escrcpy"):
     Repo.clone_from(repo_url, clone_path)
 
 def get_code_files(repo_path: str):
-    extensions = [".js", ".ts", ".vue", ".json", ".md", ".yml", ".CN", ".1", "readme", "license"]
-    files = [p for ext in extensions for p in Path(repo_path).rglob(f"*{ext}")]
-    return files
+    valid_files = []
+    for p in Path(repo_path).rglob("*"):
+        if not p.is_file():
+            continue
+        try:
+            # Attempt to read just a small portion to test the encoding
+            with open(p, "r", encoding="utf-8") as f:
+                f.read(2048)  # Only a small sample is needed
+            valid_files.append(p)
+        except (UnicodeDecodeError, Exception):
+            continue 
+    return valid_files
 
 # Splits the file into chunks of chunk_size number of lines
 def chunk_code(code: str, chunk_size: int = 15, stride: int = 10):

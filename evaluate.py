@@ -12,13 +12,15 @@ def evaluate(queries_file: str):
         gold = set(q.get("files") or q.get("answers") or [])
         pred = set(query_repository(question))
 
-        print("Question:", question)
-        print("Expected:", gold)
-        print("Predicted:", pred)
-        print("---")
-
         if gold & pred:
             hits += 1
+
+        else:
+            print("Question:", question)
+            print("Expected:", gold)
+            print("Predicted:", pred)
+            print("---")
+
         total += 1
 
-    print(f"Recall@10: {hits / total:.2f}")
+    print(f"Recall@10: {hits / total:.6f}")
